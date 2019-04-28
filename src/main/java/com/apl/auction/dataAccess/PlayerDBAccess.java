@@ -6,12 +6,13 @@ import java.util.List;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.client.MongoCollection;
+
 import com.apl.auction.helper.Constant;
 import com.apl.auction.helper.DatabaseConnectionAPL;
 import com.apl.auction.model.Player;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoCollection;
-
 
 public class PlayerDBAccess {
 	DatabaseConnectionAPL dc;
@@ -110,6 +111,7 @@ public class PlayerDBAccess {
 				p.setFirstName(result.get("firstName").toString());
 				p.setLastName(result.get("lastName") == null ? "" : result.get("lastName").toString());
 				p.setTeamName(result.getString("teamName"));
+				p.setRole(result.getString("role"));
 				p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
 				p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
 				p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
@@ -128,6 +130,19 @@ public class PlayerDBAccess {
 		return playerList;
 	}
 
+	public Document getNextPlayer() {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
+		Document documentFind = new Document();
+		documentFind.append("teamName",null );
+		Document player = players.find(documentFind).first();// FROM yourCollection
+		
+		dc.closeClient();
+		return player;
+	}
+
+	
+	
 	public String getTeamNameOfCaptain(String email, String password) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
@@ -147,6 +162,17 @@ public class PlayerDBAccess {
 		dc.closeClient();
 		return teamName;
 
+	}
+	
+	
+	public String getCaptainId(String email) {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
+		Document documentFind = new Document();
+		documentFind.append("email", email);
+		Document playerDetails = players.find(documentFind).first();
+		String pl =  playerDetails.get("_id").toString();
+		return playerDetails.get("_id").toString();
 	}
 
 	public Player getDreamTeam(String email) {
@@ -186,13 +212,6 @@ public class PlayerDBAccess {
 		return true;
 	}
 
-	
-	/**
-	 * Temporary posting api for any rest calls required
-	 * ******Required to be removed post deployment*******
-	 * @param playerList
-	 * @return
-	 */
 	public boolean postTemp(List<Player> playerList) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> students = dc.getCollection(Constant.PLAYERDATABASENAME);
@@ -208,6 +227,27 @@ public class PlayerDBAccess {
 		}
 
 		dc.closeClient();
+
+		return true;
+	}
+
+	public boolean soldPlayer(Player player) {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
+
+		
+		BasicDBObject query = new BasicDBObject("_id", new ObjectId(player.get_id()));
+		BasicDBObject updateFields = new BasicDBObject();
+		updateFields.append("teamName", player.getTeamName());
+		updateFields.append("cost", player.getCost());
+		BasicDBObject setQuery = new BasicDBObject();
+		setQuery.append("$set", updateFields);
+		players.updateOne(query, setQuery);
+		
+		Document documentFind = new Document();
+		documentFind.append("_id", player.get_id());
+		Document playerDetails = players.find(documentFind).first();// FROM yourCollection
+		
 		return true;
 	}
 }

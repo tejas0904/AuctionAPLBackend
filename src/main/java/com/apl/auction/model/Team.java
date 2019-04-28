@@ -11,7 +11,7 @@ public class Team {
 	String viceCaptain;
 	String associatedCaptain;
 	List<MyTeam> myTeam;
-	List<List<DreamTeam>> dreamTeam;
+	List<DreamTeam3Player> dreamTeam3Player;
 	public String getTeamName() {
 		return teamName;
 	}
@@ -54,11 +54,11 @@ public class Team {
 	public void setMyTeam(List<MyTeam> myTeam) {
 		this.myTeam = myTeam;
 	}
-	public List<List<DreamTeam>> getDreamTeam() {
-		return dreamTeam;
+	public List<DreamTeam3Player> getDreamTeam3Player() {
+		return dreamTeam3Player;
 	}
-	public void setDreamTeam(List<List<DreamTeam>> dreamTeam) {
-		this.dreamTeam = dreamTeam;
+	public void setDreamTeam3Player(List<DreamTeam3Player> dreamTeam) {
+		this.dreamTeam3Player = dreamTeam;
 	}
 	
 

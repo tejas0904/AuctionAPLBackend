@@ -8,6 +8,7 @@ public class Player {
 	private String firstName;
 	private String lastName;
 	private String teamName;
+	private String role;
 	
 	private String email;
 	private Long mobileNumber;
@@ -284,6 +285,23 @@ public class Player {
 
 	public void setTeamName(String teamName) {
 		this.teamName = teamName;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	private int cost;
+	public int getCost() {
+		return cost;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
 	}
 
 
