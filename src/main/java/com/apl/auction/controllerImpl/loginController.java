@@ -25,6 +25,8 @@ public class loginController extends ControllerImpl implements Controller {
 	HttpServletRequest request;
 	HttpSession session;
 
+	
+	
 	@GET
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)
