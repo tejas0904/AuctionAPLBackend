@@ -53,5 +53,4 @@ public class SocketImpl {
 		System.out.println("mediator: closed websocket channel for client " + mail);
 		peers.remove(session);
 	}
-
 }

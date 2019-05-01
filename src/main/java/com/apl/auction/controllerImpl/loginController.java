@@ -32,17 +32,31 @@ public class loginController extends ControllerImpl implements Controller {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(@QueryParam("email") String email, @QueryParam("password") String password) {
 		session = request.getSession();
-		session.setAttribute("email", email);
-		session.setAttribute("password", password);
+//		session.setAttribute("email", email);
+//		session.setAttribute("password", password);
 		PlayerDBAccess playerDB = new PlayerDBAccess();
-		if (!playerDB.getTeamNameOfCaptain(email, password).equals("wrong password")) {
+		
+		if(playerDB.getTeamNameOfCaptain(email, password))
+		{
+			System.out.println("HERE In LOGIN");
+			session.setAttribute("email", email);
+			session.setAttribute("password", password);
+			return Response.status(Status.ACCEPTED).build();
+		}
+		else
+		{
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+			
+		
+		/*if (!playerDB.getTeamNameOfCaptain(email, password))//.equals("wrong password")) {
 			String json = "{\"teamName\": \"" + playerDB.getTeamNameOfCaptain(email, password)
 					+ "\",\"teamBudget\":16000}";
 			return Response.ok(json).build();
 		} else {
-			String error = playerDB.getTeamNameOfCaptain(email, password);
+			S error = playerDB.getTeamNameOfCaptain(email, password);
 			return Response.status(Status.UNAUTHORIZED).entity(error).build();
-		}
+		}*/
 
 	}
 

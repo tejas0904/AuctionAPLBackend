@@ -143,14 +143,21 @@ public class PlayerDBAccess {
 
 	
 	
-	public String getTeamNameOfCaptain(String email, String password) {
+	public boolean getTeamNameOfCaptain(String email, String password) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
 		documentFind.append("email", email);
+		documentFind.append("password", Integer.parseInt(password));
 		Document playerDetails = players.find(documentFind).first();
-		String teamName = "";
-		if(playerDetails!=null)
+		//String teamName = "";
+		
+		if(playerDetails==null)
+			return false;
+		
+		else
+			return true;
+		/*if(playerDetails!=null)
 			teamName = "wrong email";
 		
 		if (playerDetails.getString("password").equals(password))
@@ -160,7 +167,7 @@ public class PlayerDBAccess {
 			teamName = "wrong password";
 
 		dc.closeClient();
-		return teamName;
+		return teamName;*/
 
 	}
 	
@@ -216,7 +223,7 @@ public class PlayerDBAccess {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> students = dc.getCollection(Constant.PLAYERDATABASENAME);
 
-		for (int i = 0; i < playerList.size(); i++) {
+		/*for (int i = 0; i < playerList.size(); i++) {
 			BasicDBObject query = new BasicDBObject("_id", new ObjectId(playerList.get(i).get_id()));
 			BasicDBObject updateFields = new BasicDBObject();
 			updateFields.append("isMine", false);
@@ -224,8 +231,26 @@ public class PlayerDBAccess {
 			BasicDBObject setQuery = new BasicDBObject();
 			setQuery.append("$set", updateFields);
 			students.updateOne(query, setQuery);
+		}*/
+		
+		for (int i = 0; i < playerList.size(); i++) 
+		{
+			BasicDBObject query = new BasicDBObject("_id", new ObjectId(playerList.get(i).get_id()));
+			//String id = playerList.get(i).get_id();
+			
+			//BasicDBObject updateFields = new BasicDBObject();
+			//db.example.update({}, {$unset: {words:1}}, false, true);
+			//updateFields.append("isMine", false);
+			//updateFields.append("isOpponent", false);
+			BasicDBObject setQuery = new BasicDBObject();
+			//setQuery.append("$unset", updateFields);
+			//db.domain.update({},{$unset: {affLink:1}},{multi: true});
+			setQuery.append("$unset",new BasicDBObject("isMine",""));
+			//setQuery.put("$unset",new BasicDBObject("isOpponent",""));
+			students.updateOne(query, setQuery);
 		}
 
+		
 		dc.closeClient();
 
 		return true;

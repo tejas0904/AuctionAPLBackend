@@ -40,6 +40,8 @@ import com.apl.auction.model.Player;
 
 
 import com.apl.auction.model.Team;
+import com.google.gson.Gson;
+
 import sun.misc.BASE64Decoder;
 
 
@@ -126,6 +128,17 @@ public class PlayerController {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
 			Document player = playerDB.getNextPlayer();
+			
+			if(SocketProjectorImpl.peers!=null)
+			{
+				Session session = SocketProjectorImpl.peers;
+		        try {
+		        	session.getBasicRemote().sendText(new Gson().toJson(player));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    }
+			
 			return Response.ok().entity(player.toJson()).build();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,8 +153,18 @@ public class PlayerController {
 	public Response playerSold(Player player) {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
+			Boolean flag=playerDB.soldPlayer(player);
+			if(SocketProjectorImpl.peers!=null)
+			{
+				Session session = SocketProjectorImpl.peers;
+		        try {
+		        	session.getBasicRemote().sendText(flag.toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    }
 			
-			return Response.ok().entity(playerDB.soldPlayer(player)).build();
+			return Response.ok().entity(flag).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

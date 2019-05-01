@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
  
 @Named
 @Provider
-public class MyInterceptor implements ContainerRequestFilter 
+public class SessionInterceptor implements ContainerRequestFilter 
 {
     @Context
     private HttpServletRequest servletRequest;
@@ -22,8 +22,11 @@ public class MyInterceptor implements ContainerRequestFilter
     public void filter(ContainerRequestContext requestContext) throws IOException 
     {
     	UriInfo info = requestContext.getUriInfo();
-    	if(!info.getPath().toString().contains("logger"))
+    	System.out.print(info.getPath().toString());
+    	if(!info.getPath().toString().contains("logger") && !info.getPath().toString().contains("socket") 
+    			&& !info.getPath().toString().contains("projector"))
     	{
+    		
     		HttpSession session = servletRequest.getSession();
     		System.out.println(session.getAttribute("email")); 
     		//requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
