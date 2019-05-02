@@ -127,7 +127,7 @@ public class PlayerController {
 	public Response getNextPlayer() {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
-			Document player = playerDB.getNextPlayer();
+			Player player = playerDB.getNextPlayer();
 			
 			if(SocketProjectorImpl.peers!=null)
 			{
@@ -139,7 +139,7 @@ public class PlayerController {
 				}
 		    }
 			
-			return Response.ok().entity(player.toJson()).build();
+			return Response.ok().entity(player).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

@@ -130,15 +130,33 @@ public class PlayerDBAccess {
 		return playerList;
 	}
 
-	public Document getNextPlayer() {
+	public Player getNextPlayer() {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
 		documentFind.append("teamName",null );
-		Document player = players.find(documentFind).first();// FROM yourCollection
+		Document result = players.find(documentFind).first();// FROM yourCollection
 		
 		dc.closeClient();
-		return player;
+		
+		Player p = new Player();
+		p.set_id(result.getObjectId("_id").toString());
+		p.setFirstName(result.get("firstName").toString());
+		p.setLastName(result.get("lastName") == null ? "" : result.get("lastName").toString());
+		p.setTeamName(result.getString("teamName"));
+		p.setRole(result.getString("role"));
+		p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
+		p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
+		p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
+		p.setBattingComment(
+				result.get("battingComment") == null ? "" : result.get("battingComment").toString());
+		p.setBowlingComment(
+				result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
+		p.setFieldingComment(
+				result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
+		p.setPhoto(result.get("photo").toString());
+
+		return p;
 	}
 
 	
@@ -259,8 +277,6 @@ public class PlayerDBAccess {
 	public boolean soldPlayer(Player player) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
-
-		
 		BasicDBObject query = new BasicDBObject("_id", new ObjectId(player.get_id()));
 		BasicDBObject updateFields = new BasicDBObject();
 		updateFields.append("teamName", player.getTeamName());
@@ -268,10 +284,6 @@ public class PlayerDBAccess {
 		BasicDBObject setQuery = new BasicDBObject();
 		setQuery.append("$set", updateFields);
 		players.updateOne(query, setQuery);
-		
-		Document documentFind = new Document();
-		documentFind.append("_id", player.get_id());
-		Document playerDetails = players.find(documentFind).first();// FROM yourCollection
 		
 		return true;
 	}
