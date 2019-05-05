@@ -23,7 +23,7 @@ public class SessionInterceptor implements ContainerRequestFilter
     {
     	UriInfo info = requestContext.getUriInfo();
     	System.out.print(info.getPath().toString());
-    	if(!info.getPath().toString().contains("logger") && !info.getPath().toString().contains("socket") 
+    	if(!requestContext.getMethod().equals("OPTIONS") && !info.getPath().toString().contains("logger") && !info.getPath().toString().contains("socket") 
     			&& !info.getPath().toString().contains("projector"))
     	{
     		

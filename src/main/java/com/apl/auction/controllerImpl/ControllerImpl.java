@@ -15,16 +15,34 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.apl.auction.controller.Controller;
+import com.apl.auction.dataAccess.PlayerDBAccess;
 import com.apl.auction.externalApi.S3ImageUpload;
+import com.apl.auction.model.Player;
 
 import sun.misc.BASE64Decoder;
 
 public class ControllerImpl implements Controller{
 	
-	@GET
+	@POST
 	@Path("getit")
-	public String getit() {
-		return "getit!!!";
+	public String getit(Player playerDetail) {
+		try {
+			PlayerDBAccess playerDB = new PlayerDBAccess();
+			boolean isPlayerRegistered = false;
+			if (playerDetail != null) {
+				String s3url = getImageUrl(playerDetail.getPhoto(), playerDetail.getImageFormat(),
+						playerDetail.getMobileNumber());
+				isPlayerRegistered = playerDB.registerPlayer(playerDetail, s3url);
+			}
+
+			if (isPlayerRegistered)
+				return "success";
+			else
+				throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
 	}
 	
 	@POST

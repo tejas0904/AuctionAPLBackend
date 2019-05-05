@@ -148,7 +148,7 @@ public class PlayerDBAccess {
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
 		documentFind.append("email", email);
-		documentFind.append("password", Integer.parseInt(password));
+		documentFind.append("password", password);
 		Document playerDetails = players.find(documentFind).first();
 		//String teamName = "";
 		
