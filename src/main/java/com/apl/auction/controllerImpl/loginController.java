@@ -32,11 +32,9 @@ public class loginController extends ControllerImpl implements Controller {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(@QueryParam("email") String email, @QueryParam("password") String password) {
 		session = request.getSession();
-//		session.setAttribute("email", email);
-//		session.setAttribute("password", password);
 		PlayerDBAccess playerDB = new PlayerDBAccess();
 		
-		if(playerDB.getTeamNameOfCaptain(email, password))
+		if(playerDB.verifyEmailPassword(email, password))
 		{
 			System.out.println("HERE In LOGIN");
 			session.setAttribute("email", email);

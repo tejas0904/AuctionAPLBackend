@@ -1,4 +1,4 @@
-package com.apl.auction.helper;
+ package com.apl.auction.helper;
 import java.io.IOException;
 
 import javax.inject.Named;

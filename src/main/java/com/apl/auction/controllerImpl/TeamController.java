@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
+import java.util.PriorityQueue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,10 +33,10 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.apl.auction.dataAccess.PlayerDBAccess;
 import com.apl.auction.dataAccess.TeamDBAccess;
+import com.apl.auction.model.DreamTeam3Player;
 import com.apl.auction.model.Player;
 import com.apl.auction.model.Team;
 import sun.misc.BASE64Decoder;
-
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -42,11 +44,16 @@ import sun.misc.BASE64Decoder;
 @Path("team")
 public class TeamController {
 
-	
-	
 	@Context
 	HttpServletRequest request;
 	HttpSession session;
+
+	public static PriorityQueue<Team> hundredDollarPlayerBuyerTeamQueue = new PriorityQueue<>(new Comparator<Team>() {
+		@Override
+		public int compare(Team o1, Team o2) {
+			return o1.getHundredDollarPlayerCount() > o2.getHundredDollarPlayerCount() ? -1 : 1;
+		}
+	});
 
 	// Test method
 	@GET
@@ -59,17 +66,15 @@ public class TeamController {
 	@GET
 	@Path("newTeam")
 	public String newTeam() {
-		    for(Session session: SocketImpl.peers){
-		        try {
-					session.getBasicRemote().sendText("Update with new teams");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		    }
+		for (Session session : SocketImpl.peers) {
+			try {
+				session.getBasicRemote().sendText("Update with new teams");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return "getit!!!";
 	}
-
-	
 
 	@POST
 	@Path("teamDetails")
@@ -80,7 +85,7 @@ public class TeamController {
 			TeamDBAccess teamDB = new TeamDBAccess();
 			boolean isTeamRegistered = false;
 			if (teamDetail != null) {
-				
+
 				isTeamRegistered = teamDB.registerTeam(teamDetail);
 			}
 
@@ -93,53 +98,49 @@ public class TeamController {
 			return "error";
 		}
 	}
-	
-	
-	
-	
+
 	@POST
 	@Path("saveDreamTeam")
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Boolean saveDreamTeam(Team team) {
 		try {
 			TeamDBAccess teamDB = new TeamDBAccess();
-				
-			
+			System.out.println(team);
 			return teamDB.saveTeam(team);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
-	@POST
+
+	@GET
 	@Path("getDreamTeam")
-	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDreamTeam() {
+
+		TeamDBAccess teamDB = new TeamDBAccess();
+		PlayerDBAccess playerDB = new PlayerDBAccess();
+
+		session = request.getSession();
+		String email = (String) session.getAttribute("email");
+		String captainId = playerDB.getCaptainId(email);
 		
-			TeamDBAccess teamDB = new TeamDBAccess();
-			PlayerDBAccess playerDB = new PlayerDBAccess();
-			
-			session = request.getSession();
-			String email = (String) session.getAttribute("email");
-			String captainId = playerDB.getCaptainId(email);
-			Object dreamTeam = teamDB.getDreamTeamofCaptain(captainId);
-			return Response.ok(dreamTeam).build();
-			
-			
+		Object dreamTeam = teamDB.getDreamTeamofCaptain(captainId);
+		return Response.ok(dreamTeam==null?"[]":dreamTeam).build();
+
 	}
 
-	
-	
-	
-	
 	@POST
 	@Path("setDreamTeam")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Boolean setDreamTeam(Player playerDreamTeam) {
+	public Boolean setDreamTeam(List<DreamTeam3Player> dreamTeamList) {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
-			Boolean isSetTeam = playerDB.setDreamTeam(playerDreamTeam);
+			session = request.getSession();
+			String email = (String) session.getAttribute("email");
+			String captainId = playerDB.getCaptainId(email);
+			
+			Boolean isSetTeam = playerDB.setDreamTeam(dreamTeamList,captainId);
 			if (isSetTeam != null) {
 				return isSetTeam;
 			} else {
@@ -150,22 +151,13 @@ public class TeamController {
 			return false;
 		}
 	}
-	
+
 	@GET
 	@Path("getAllTeams")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllTeams() {
 		TeamDBAccess teamDB = new TeamDBAccess();
 		BasicDBList allTeams = teamDB.getAllTeams();
-		
 		return Response.ok().entity(allTeams).build();
-		
 	}
-
-	
-	
-	
-
-	
-
 }

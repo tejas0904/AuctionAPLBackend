@@ -14,7 +14,6 @@ public class DatabaseConnectionAPL {
 	MongoClient client;
 
 	public DatabaseConnectionAPL() {
-
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://" + Constant.USERNAME + ":" + Constant.PASSWORD + "@ds221416.mlab.com:21416/apl2019");
 		this.client = new MongoClient(uri);
@@ -22,13 +21,11 @@ public class DatabaseConnectionAPL {
 	}
 	
 	public MongoCollection<Document> getCollection(String dbName) {
-
 		MongoCollection<Document> collection =  this.database.getCollection(dbName);
 		return collection;
-
 	}
 	
-	public void closeClient(){
+	public void closeClient() {
 		this.client.close();
 	}
 }

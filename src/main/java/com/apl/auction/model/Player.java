@@ -9,7 +9,7 @@ public class Player {
 	private String lastName;
 	private String teamName;
 	private String role;
-	
+	private Boolean isSold;
 	private String email;
 	private Long mobileNumber;
 	private String address;
@@ -304,7 +304,11 @@ public class Player {
 		this.cost = cost;
 	}
 
+	public Boolean getIsSold() {
+		return isSold;
+	}
 
-	
-	
+	public void setIsSold(Boolean isSold) {
+		this.isSold = isSold;
+	}
 }

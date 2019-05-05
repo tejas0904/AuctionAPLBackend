@@ -9,15 +9,25 @@ public class Team {
 	String logo;
 	String captain;
 	String viceCaptain;
-	String associatedCaptain;
-	List<MyTeam> myTeam;
+	String associatedCaptain;     
+	List<MyTeam> myTeam;  
 	List<DreamTeam3Player> dreamTeam3Player;
+	int hundredDollarPlayerCount;
+	
 	public String getTeamName() {
 		return teamName;
 	}
 	public void setTeamName(String teamName) {
 		this.teamName = teamName;
 	}
+	
+	public int getHundredDollarPlayerCount() {
+		return hundredDollarPlayerCount;
+	}
+	public void setHundredDollarPlayerCount(int hundredDollarPlayerCount) {
+		this.hundredDollarPlayerCount = hundredDollarPlayerCount;
+	}
+	
 	public int getBalance() {
 		return balance;
 	}
