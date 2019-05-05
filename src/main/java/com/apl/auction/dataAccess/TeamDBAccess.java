@@ -27,6 +27,7 @@ import com.google.gson.JsonArray;
 public class TeamDBAccess {
 	DatabaseConnectionAPL dc;
 
+	
 	public boolean registerTeam(Team team) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
@@ -110,7 +111,6 @@ public class TeamDBAccess {
 		Document documentFind = new Document();
 		documentFind.append("captain", captainId);
 		team = teams.find(documentFind).first();
-
 		return team.get("dreamTeam");
 	}
 
@@ -152,13 +152,10 @@ public class TeamDBAccess {
 			team.setAssociatedCaptain(teamDocument.getString("associatedCaptain"));
 			List<MyTeam> myTeam = allPlayersHashMap.get(teamDocument.getString("teamName"));
 			team.setMyTeam(myTeam);
+			//team.setHundredDollarPlayerCount(team.getHundredDollarPlayerCount()+1);
 	        allTeams.add(team);
 	    }
 		
 		return allTeams;
 	}
-	
-	
-
-	
 }

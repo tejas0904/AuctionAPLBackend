@@ -13,7 +13,6 @@ public class DatabaseConnection {
 	MongoClient client;
 
 	public DatabaseConnection() {
-
 		MongoClientURI uri = new MongoClientURI(
 				"mongodb://" + Constant.USERNAME + ":" + Constant.PASSWORD + "@ds147789.mlab.com:47789/coen6313");
 		this.client = new MongoClient(uri);
@@ -21,10 +20,7 @@ public class DatabaseConnection {
 	}
 
 	public MongoCollection<Document> getCollection(String dbName) {
-
-		MongoCollection<Document> collection =  this.database.getCollection(dbName);
-		return collection;
-
+		return this.database.getCollection(dbName);
 	}
 	
 	public void closeClient(){

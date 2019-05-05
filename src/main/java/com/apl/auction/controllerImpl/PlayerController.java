@@ -29,10 +29,12 @@ import org.bson.types.ObjectId;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
 import com.apl.auction.helper.Constant;
 import com.apl.auction.dataAccess.PlayerDBAccess;
+import com.apl.auction.dataAccess.TeamDBAccess;
 import com.apl.auction.externalApi.S3ImageUpload;
 import com.apl.auction.helper.ResponseLogin;
 
@@ -50,14 +52,29 @@ import sun.misc.BASE64Decoder;
  */
 @Path("player")
 public class PlayerController {
-
-	
-	
 	@Context
 	HttpServletRequest request;
 	HttpSession session;
+	
+	/*PlayerController() {
+		TeamDBAccess teamDb = new TeamDBAccess();
+		teamDb.getAllTeams();
+	}*/
 
 	// Test method
+	
+	TeamController teamController;
+	TeamDBAccess teamDB;
+	BasicDBList allTeams;
+	public PlayerController() {
+		teamController = new TeamController();
+		teamDB = new TeamDBAccess();
+		allTeams = teamDB.getAllTeams();
+		for(int i=0;i<allTeams.size();i++)
+		{
+			teamController.hundredDollarPlayerBuyerTeamQueue.add((Team) allTeams.get(i));
+		}
+	}
 	@GET
 	@Path("getit")
 	public String getit() {
@@ -68,7 +85,7 @@ public class PlayerController {
 	@GET
 	@Path("newPlayer")
 	public String newPlayer() {
-		    for(Session session: SocketImpl.peers){
+		    for(Session session: SocketImpl.peers) {
 		        try {
 					session.getBasicRemote().sendText("Update with new players");
 				} catch (IOException e) {
@@ -113,9 +130,7 @@ public class PlayerController {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
 			List<Player> playerList = playerDB.getAllPlayers();
-			
-				return playerList;
-			
+			return playerList;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -128,19 +143,10 @@ public class PlayerController {
 	public Response getNextPlayer() {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
-			Document player = playerDB.getNextPlayer();
+			Player player = playerDB.getNextPlayer();
+			projectorBroadcast(player);
 			
-			if(SocketProjectorImpl.peers!=null)
-			{
-				Session session = SocketProjectorImpl.peers;
-		        try {
-		        	session.getBasicRemote().sendText(new Gson().toJson(player));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		    }
-			
-			return Response.ok().entity(player.toJson()).build();
+			return Response.ok().entity(player).build();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -154,16 +160,8 @@ public class PlayerController {
 	public Response playerSold(Player player) {
 		try {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
-			Boolean flag=playerDB.soldPlayer(player);
-			if(SocketProjectorImpl.peers!=null)
-			{
-				Session session = SocketProjectorImpl.peers;
-		        try {
-		        	session.getBasicRemote().sendText(flag.toString());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-		    }
+			Boolean flag=playerDB.soldOrUndoPlayer(player);
+			projectorBroadcast(player);
 			
 			return Response.ok().entity(flag).build();
 		} catch (Exception e) {
@@ -172,7 +170,18 @@ public class PlayerController {
 		}
 	}
 	
-	
+	private void projectorBroadcast(Player player) {
+		if(SocketProjectorImpl.peers!=null)
+		{
+			Session session = SocketProjectorImpl.peers;
+		    try {
+		    	session.getBasicRemote().sendText(new Gson().toJson(player));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 
 	@GET
 	@Path("getPlayerPayments")
@@ -220,7 +229,7 @@ public class PlayerController {
 			PlayerDBAccess playerDB = new PlayerDBAccess();
 			boolean isPlayerRegistered = false;
 			if (playerList != null) {
-				isPlayerRegistered = playerDB.postTemp(playerList);
+				isPlayerRegistered = playerDB.removeFields(playerList);
 			}
 			if (isPlayerRegistered)
 				return "success";
@@ -232,6 +241,71 @@ public class PlayerController {
 		}
 	}
 
+	@POST
+	@Path("teamCostRemove")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String teamCostIdToRemove(List<Player> playerList) {
+		try {
+			PlayerDBAccess playerDB = new PlayerDBAccess();
+			boolean isPlayerRegistered = false;
+			if (playerList != null) {
+				isPlayerRegistered = playerDB.teamCostIdToRemove(playerList);
+			}
+			if (isPlayerRegistered)
+				return "success";
+			else
+				throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	@POST
+	@Path("teamCostIdRemove")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String teamCostIdToRemove(Player player) {
+		try {
+			PlayerDBAccess playerDB = new PlayerDBAccess();
+			boolean isPlayerRegistered = false;
+			if (player != null) {
+				isPlayerRegistered = playerDB.teamCostIdToRemove(player);
+			}
+			if (isPlayerRegistered)
+				return "success";
+			else
+				throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
+	
+	/*@POST
+	@Path("teamCostIdRemove")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public String undoPlayerSold(Player player) {
+		try {
+			PlayerDBAccess playerDB = new PlayerDBAccess();
+			boolean isPlayerRegistered = false;
+			if (player != null) {
+				isPlayerRegistered = playerDB.soldPlayer(player);
+			}
+			if (isPlayerRegistered)
+				return "success";
+			else
+				throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}*/
+	
 	
 	public String getImageUrl(String playerImage, String ext, long mobileNumber) {
 

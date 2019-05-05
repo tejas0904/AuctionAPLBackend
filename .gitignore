@@ -12,3 +12,9 @@ target/classes/com/apl/auction/helper/MyInterceptor.class
 target/m2e-wtp/web-resources/META-INF/MANIFEST.MF
 target/m2e-wtp/web-resources/META-INF/maven/APLBackend.project/APL2019/pom.properties
 target/m2e-wtp/web-resources/META-INF/maven/APLBackend.project/APL2019/pom.xml
+target/m2e-wtp/web-resources/META-INF/maven/APLBackend.project/APL2019/pom.xml
+target/m2e-wtp/web-resources/META-INF/maven/APLBackend.project/APL2019/pom.properties
+target/m2e-wtp/web-resources/META-INF/MANIFEST.MF
+target/classes/com/apl/auction/helper/CORSFilter.class
+target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
+target/classes/com/apl/auction/controllerImpl/PlayerController.class
