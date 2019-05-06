@@ -19,3 +19,17 @@ target/classes/com/apl/auction/helper/CORSFilter.class
 target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
 target/classes/com/apl/auction/controllerImpl/PlayerController.class
 *.class
+*.class
+target/classes/com/apl/auction/model/Team.class
+target/classes/com/apl/auction/model/Player.class
+target/classes/com/apl/auction/model/MyTeam.class
+target/classes/com/apl/auction/model/DreamTeamPlayer.class
+target/classes/com/apl/auction/helper/CORSFilter.class
+target/classes/com/apl/auction/helper/Constant.class
+target/classes/com/apl/auction/dataAccess/TeamDBAccess.class
+target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
+target/classes/com/apl/auction/controllerImpl/TeamController.class
+target/classes/com/apl/auction/controllerImpl/SocketImpl.class
+target/classes/com/apl/auction/controllerImpl/PlayerController.class
+target/classes/com/apl/auction/controllerImpl/loginController.class
+target/classes/com/apl/auction/controllerImpl/ControllerImpl.class

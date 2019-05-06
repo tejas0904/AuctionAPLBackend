@@ -125,6 +125,7 @@ public class PlayerDBAccess {
 				p.setFieldingComment(
 						result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 				p.setPhoto(result.get("photo").toString());
+				p.setCost(Integer.parseInt(result.get("cost") == null ? "0": result.get("cost").toString()));
 
 				playerList.add(p);
 			}
@@ -133,115 +134,104 @@ public class PlayerDBAccess {
 		return playerList;
 	}
 
+	public static int getRandom(int max){ 
+		 return (int) (Math.random()*max); //incorrect always return zero return (int) (Math.random()*max); }
+	}
+	
 	public Player getNextPlayer() {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
-		documentFind.append("teamName",null );
-		Document result = players.find(documentFind).first();// FROM yourCollection
-		
-		dc.closeClient();
-		
-		Player p = new Player();
-		p.set_id(result.getObjectId("_id").toString());
-		p.setFirstName(result.get("firstName").toString());
-		p.setLastName(result.get("lastName") == null ? "" : result.get("lastName").toString());
-		p.setTeamName(result.getString("teamName"));
-		p.setRole(result.getString("role"));
-		p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
-		p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
-		p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
-		p.setBattingComment(
-				result.get("battingComment") == null ? "" : result.get("battingComment").toString());
-		p.setBowlingComment(
-				result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
-		p.setFieldingComment(
-				result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
-		p.setPhoto(result.get("photo").toString());
-
-		return p;
+		documentFind.append("teamName", null);
+		List<Document> results = players.find(documentFind).into(new ArrayList<Document>());// FROM yourCollection
+		if (results != null) {
+			Document result = results.get(getRandom(results.size()));
+			dc.closeClient();
+			Player p = new Player();
+			p.set_id(result.getObjectId("_id").toString());
+			p.setFirstName(result.get("firstName").toString());
+			p.setLastName(result.get("lastName") == null ? "" : result.get("lastName").toString());
+			p.setTeamName(result.getString("teamName"));
+			p.setRole(result.getString("role"));
+			p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
+			p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
+			p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
+			p.setBattingComment(result.get("battingComment") == null ? "" : result.get("battingComment").toString());
+			p.setBowlingComment(result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
+			p.setFieldingComment(result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
+			p.setPhoto(result.get("photo").toString());
+			return p;
+		} else {
+			return null;
+		}
 	}
+	/**
+	 * playerSold endpoint to sell a player after nextPlayer 
+	 * _id
+	 * teamName
+	 * cost
+	 * @param player{_id}
+	 * @return
+	 */
+	public Player soldPlayer(Player player) {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 
+		try {
+		BasicDBObject query = new BasicDBObject("_id", new ObjectId(player.get_id()));
+		BasicDBObject updateFields = new BasicDBObject();
+		updateFields.append("teamName", player.getTeamName());
+		updateFields.append("cost", player.getCost());
+		BasicDBObject setQuery = new BasicDBObject();
+		setQuery.append("$set", updateFields);
+		players.updateOne(query, setQuery);
+		return player;
+		}catch(Exception ex) {
+			System.out.println(ex);
+			return null;
+		}
+	}
 	
-	
-	public boolean verifyEmailPassword(String email, String password) {
+	/**
+	 * Logger/login database access call
+	 * @param email
+	 * @param password
+	 * @return teamName for the email
+	 */
+	public String getTeamNameOfCaptain(String email, String password) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
 		documentFind.append("email", email);
 		documentFind.append("password", password);
 		Document playerDetails = players.find(documentFind).first();
-		//String teamName = "";
 		
 		if(playerDetails==null)
-			return false;
-		
+			return null;
 		else
-			return true;
+			return playerDetails.getString("teamName");
 	}
 	
-	
-	public String getCaptainId(String email) {
+	// temp -- to get captain id from session email
+	public String getTeamName(String email) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
 		Document documentFind = new Document();
 		documentFind.append("email", email);
 		Document playerDetails = players.find(documentFind).first();
-		String pl =  playerDetails.get("_id").toString();
-		return playerDetails.get("_id").toString();
-	}
-
-	public Player getDreamTeam(String email) {
-		dc = new DatabaseConnectionAPL();
-		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
-
-		Document documentFind = new Document();
-		documentFind.append("isCaptain", true);
-		documentFind.append("email", email);
-
-		List<Document> results = players.find(documentFind).into(new ArrayList<Document>());// FROM yourCollection
-		Player player = new Player();
-		for (Document result : results) {
-			if (result != null) {
-				player.set_id(result.getObjectId("_id").toString());
-				player.setDreamTeam((List<List<String>>) result.get("dreamTeam"));
-			}
-		}
-		dc.closeClient();
-		return player;
-	}
+		return playerDetails.get("teamName").toString();
+	}	
 	
-	
-	public Boolean setDreamTeam(List<DreamTeam3Player> dreamTeamList,String captainId) {
+
+	public boolean teamCostRemove() {
 		dc = new DatabaseConnectionAPL();
-		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
+		MongoCollection<Document> playerDb = dc.getCollection(Constant.PLAYERDATABASENAME);
 
-		BasicDBObject query = new BasicDBObject("captain",captainId);
-		BasicDBObject updateFields = new BasicDBObject();
-		updateFields.append("dreamTeam", dreamTeamList);
-		BasicDBObject setQuery = new BasicDBObject();
-		setQuery.append("$set", updateFields);
-		teams.updateOne(query, setQuery);
-
-		dc.closeClient();
-
-		return true;
-	}
-
-	public boolean teamCostIdToRemove(List<Player> playerList) {
-		dc = new DatabaseConnectionAPL();
-		MongoCollection<Document> students = dc.getCollection(Constant.PLAYERDATABASENAME);
-
-		for (int i = 0; i < playerList.size(); i++) 
-		{
-			BasicDBObject query = new BasicDBObject("_id", new ObjectId(playerList.get(i).get_id()));
-			BasicDBObject setQuery = new BasicDBObject();
-			BasicDBObject setQuery1 = new BasicDBObject();
-			setQuery.append("$unset",new BasicDBObject("cost",""));
-			setQuery1.append("$unset",new BasicDBObject("teamName",""));
-			students.updateOne(query, setQuery);
-			students.updateOne(query, setQuery1);
-		}
+		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", false));
+		
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("teamName","")));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
+		//playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
 		
 		dc.closeClient();
 		return true;
@@ -295,68 +285,4 @@ public class PlayerDBAccess {
 		return true;
 	}
 	
-	/*public boolean undoSoldPlayer(Player player) {
-		dc = new DatabaseConnectionAPL();
-		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
-		BasicDBObject query = new BasicDBObject("_id", new ObjectId(player.get_id()));
-		BasicDBObject updateFields = new BasicDBObject();
-		updateFields.append("teamName", player.getTeamName());
-		updateFields.append("cost", player.getCost());
-		BasicDBObject setQuery = new BasicDBObject();
-		setQuery.append("$set", updateFields);
-		players.updateOne(query, setQuery);
-		
-		return true;
-	}*/
-
-	public boolean soldOrUndoPlayer(Player player) {
-		dc = new DatabaseConnectionAPL();
-		MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
-		BasicDBObject query = new BasicDBObject("_id", new ObjectId(player.get_id()));
-		BasicDBObject updateFields = new BasicDBObject();
-		String playerTeamName=player.getTeamName().trim().replaceAll(" ", "").toLowerCase();
-		TeamController tc=new TeamController();
-		String teamName;
-		if(player.getIsSold()!=null && player.getIsSold())
-		{
-			Document documentFind = new Document();
-			documentFind.append("_id", player.get_id());
-			Document playerDetails = players.find(documentFind).first();
-			String playerOldTeamName =  playerDetails.get("teamName").toString();
-			int playerOldCost=playerDetails.getInteger("cost");
-			if(playerOldCost==MIN_PLAYER_SELLING_COST)
-			{
-				for(Team t : tc.hundredDollarPlayerBuyerTeamQueue) {
-					teamName=t.getTeamName().trim().replaceAll(" ", "").toLowerCase();
-					if(teamName.equals(playerOldTeamName)) {
-						t.setHundredDollarPlayerCount(t.getHundredDollarPlayerCount()-1);
-					}
-					if(teamName.equals(playerTeamName) && player.getCost()==MIN_PLAYER_SELLING_COST)
-					{
-						t.setHundredDollarPlayerCount(t.getHundredDollarPlayerCount()+1);	
-					}
-				}
-			}
-		}
-		else
-		{
-			updateFields.append("teamName", player.getTeamName());
-			updateFields.append("cost", player.getCost());
-			BasicDBObject setQuery = new BasicDBObject();
-			setQuery.append("$set", updateFields);
-			players.updateOne(query, setQuery);
-			
-			
-			
-			if(player.getCost() == MIN_PLAYER_SELLING_COST) {
-				for(Team t : tc.hundredDollarPlayerBuyerTeamQueue) {
-					teamName=t.getTeamName().trim().replaceAll(" ", "").toLowerCase();
-					if(teamName.equals(playerTeamName)) {
-						t.setHundredDollarPlayerCount(t.getHundredDollarPlayerCount()+1);
-					}
-				}
-			}
-		}
-		return true;
-	}
 }

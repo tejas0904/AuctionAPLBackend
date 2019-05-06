@@ -39,7 +39,7 @@ public class SocketProjectorImpl {
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("mail") String mail) {
-		System.out.println("mediator: opened websocket channel for client " + mail);
+		System.out.println("mediator: opened websocket channel for projector " + mail);
 		peers=session;
 
 		try {
@@ -50,7 +50,7 @@ public class SocketProjectorImpl {
 
 	@OnClose
 	public void onClose(Session session, @PathParam("mail") String mail) {
-		System.out.println("mediator: closed websocket channel for client " + mail);
+		System.out.println("mediator: closed websocket channel for projector " + mail);
 		peers=null;
 	}
 }

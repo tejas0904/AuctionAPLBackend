@@ -26,42 +26,41 @@ public class loginController extends ControllerImpl implements Controller {
 	HttpSession session;
 
 	
-	
+	/**
+	 * Login endpoint for the captains
+	 * @param email
+	 * @param password
+	 * @return teamname and total budget(160000) static for now*
+	 */
 	@GET
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response login(@QueryParam("email") String email, @QueryParam("password") String password) {
 		session = request.getSession();
 		PlayerDBAccess playerDB = new PlayerDBAccess();
-		
-		if(playerDB.verifyEmailPassword(email, password))
-		{
-			System.out.println("HERE In LOGIN");
-			session.setAttribute("email", email);
-			session.setAttribute("password", password);
-			return Response.status(Status.ACCEPTED).build();
-		}
-		else
-		{
-			return Response.status(Status.UNAUTHORIZED).build();
-		}
-			
-		
-		/*if (!playerDB.getTeamNameOfCaptain(email, password))//.equals("wrong password")) {
-			String json = "{\"teamName\": \"" + playerDB.getTeamNameOfCaptain(email, password)
+		String teamName = playerDB.getTeamNameOfCaptain(email, password) ;
+		System.out.println("LOGGER :: LOGIN --> "+email);
+		if(teamName!= null){
+			String json = "{\"teamName\": \"" + teamName
 					+ "\",\"teamBudget\":16000}";
+			session.setAttribute("email", email);
+			
 			return Response.ok(json).build();
 		} else {
-			S error = playerDB.getTeamNameOfCaptain(email, password);
+			String error = "{\"error\":\"Invalid Username or Password please check\"}";
 			return Response.status(Status.UNAUTHORIZED).entity(error).build();
-		}*/
+		}
 
 	}
 
+	/**
+	 * Logout for a captain screen
+	 * @return
+	 */
 	@GET
 	@Path("logout")
 	public Response logout() {
-		System.out.println("here");
+		System.out.println("LOGGER :: LOGOUT");
 		session = request.getSession();
 		session.invalidate();
 		return Response.status(Status.UNAUTHORIZED).build();

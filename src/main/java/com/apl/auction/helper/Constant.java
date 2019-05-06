@@ -3,11 +3,11 @@ package com.apl.auction.helper;
 public class Constant {
 	public static final String USERNAME = "root";
 	public static final String PASSWORD = "password123";
-	public static final String PLAYERDATABASENAME = "players";
-	public static final String TEAMDATABASE = "teams";
+	public static final String PLAYERDATABASENAME = "playersTestData";
+	public static final String TEAMDATABASE = "teamsTestData";
 	public static String S3BucketName = "apl2019";
-	public static String AccessKey = "AKIAIAGVTMUS5ZZJVIMA";
-	public static String SecretKey = "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";
+	public static String AccessKey = "AKIAJYVF4D3TN7FPBPQQ";
+	public static String SecretKey = "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";
 	public static Float SimilarityThreshold = 70F;
 	public static final String UPLOADFOLDER = "/image/";
 	public static final String QuizDataSet = "QuizSet";

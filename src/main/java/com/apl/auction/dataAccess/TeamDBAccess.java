@@ -1,6 +1,7 @@
 package com.apl.auction.dataAccess;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,8 +68,12 @@ public class TeamDBAccess {
 	}
 	
 	
-	
-	public boolean saveTeam(Team team) {
+	/**
+	 * DB call for saving dream team for each team
+	 * @param team
+	 * @return
+	 */
+	public boolean saveDreamTeam(Team team) {
 		try {
 			dc = new DatabaseConnectionAPL();
 			MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);			
@@ -76,18 +81,17 @@ public class TeamDBAccess {
 			BasicDBObject updateFields = new BasicDBObject();
 			
 			BasicDBList set = new BasicDBList();
-			for(DreamTeam3Player dreamTeam3Player: team.getDreamTeam3Player()) {
-				BasicDBObject player3Json = new BasicDBObject();
+ 			for(List<DreamTeam3Player> dreamTeam3Player: team.getDreamTeam()) {
+ 				BasicDBList positionPlayers = new BasicDBList();
 				
-				BasicDBList playerIds = new BasicDBList();
-				for (String playerId : dreamTeam3Player.getPlayerId()) {
-					playerIds.add(playerId);
+				for(DreamTeam3Player dreamTeam : dreamTeam3Player) {
+					BasicDBObject player3Json = new BasicDBObject();
+					player3Json.put("playerId", dreamTeam.getPlayerId());
+					player3Json.put("budget", dreamTeam.getBudget());
+					positionPlayers.add(player3Json);
+					
 				}
-				
-				player3Json.put("playerId", playerIds);
-				player3Json.put("budget", dreamTeam3Player.getBudget());
-				
-				set.add(player3Json);
+				set.add(positionPlayers);
 			}
 			updateFields.append("dreamTeam", set);
 			BasicDBObject setQuery = new BasicDBObject();
@@ -103,19 +107,26 @@ public class TeamDBAccess {
 	}
 
 
-
-	public Object getDreamTeamofCaptain(String captainId) {
+	/**
+	 * DB call to get dream team
+	 * @param teamName
+	 * @return dreamTeam for a captain in Team DB
+	 */
+	public Object getDreamTeamofCaptain(String teamName) {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
 		Document team = new Document();
 		Document documentFind = new Document();
-		documentFind.append("captain", captainId);
+		documentFind.append("teamName", teamName);
 		team = teams.find(documentFind).first();
 		return team.get("dreamTeam");
 	}
 
 
-
+	/**
+	 * DB call to get all teams for auctioneer screen
+	 * @return list of all teams from Team DB
+	 */
 	public BasicDBList getAllTeams() {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
@@ -136,9 +147,10 @@ public class TeamDBAccess {
 				allPlayersHashMap.put(allPlayers.get(i).getTeamName(), listMyTeam);
 			}
 			MyTeam myTeam = new MyTeam();
-			myTeam.setId(allPlayers.get(i).get_id());
+			myTeam.set_id(allPlayers.get(i).get_id());
 			myTeam.setFirstName(allPlayers.get(i).getFirstName());
 			myTeam.setLastName(allPlayers.get(i).getLastName());
+			myTeam.setCost(allPlayers.get(i).getCost());
 			listMyTeam.add(myTeam);
 		}
 		while (teamCursor.hasNext()) {
@@ -158,4 +170,44 @@ public class TeamDBAccess {
 		
 		return allTeams;
 	}
+
+
+	public List<Team> set100$TeamList(String teamName) {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
+		Document team = new Document();
+		Document documentFind = new Document();
+		documentFind.append("teamName", teamName);
+		team = teams.find(documentFind).first();
+		Document test = teams.find().sort(new BasicDBObject("hundred$flag",-1)).limit(1).first();
+		int hundred$flagMaxIndex = test.getInteger("hundred$flag");		
+		BasicDBObject updateFields = new BasicDBObject();
+		
+		updateFields.append("hundred$flag",hundred$flagMaxIndex+1);
+		BasicDBObject setQuery = new BasicDBObject();
+		setQuery.append("$set", updateFields);
+		teams.updateOne(team, setQuery);
+		
+		return get100$TeamList();
+	}
+
+
+	public List<Team> get100$TeamList() {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> teams = dc.getCollection(Constant.TEAMDATABASE);
+		List<Document> results = teams.find().into(new ArrayList<Document>());
+		List<Team> final100$Teams = new ArrayList<Team>();
+		for (Document result : results) {
+			Team hundred$team = new Team();
+			hundred$team.setTeamName(result.getString("teamName"));
+			hundred$team.setLogo(result.getString("logo"));
+			int hundred$flag = result.getInteger("hundred$flag")!=null?result.getInteger("hundred$flag"):0;
+			hundred$team.setHundred$flag(hundred$flag);
+			final100$Teams.add(hundred$team);
+			
+		}
+		Collections.sort(final100$Teams);
+		return final100$Teams;
+	}
+
 }

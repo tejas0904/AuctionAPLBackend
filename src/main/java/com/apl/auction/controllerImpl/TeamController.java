@@ -1,11 +1,6 @@
 package com.apl.auction.controllerImpl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -14,46 +9,30 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.bson.Document;
-import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
-import org.glassfish.jersey.media.multipart.FormDataParam;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
+import com.apl.auction.controller.Controller;
 import com.apl.auction.dataAccess.PlayerDBAccess;
 import com.apl.auction.dataAccess.TeamDBAccess;
-import com.apl.auction.model.DreamTeam3Player;
 import com.apl.auction.model.Player;
 import com.apl.auction.model.Team;
-import sun.misc.BASE64Decoder;
+import com.mongodb.BasicDBList;
 
 /**
  * Root resource (exposed at "myresource" path)
  */
 @Path("team")
-public class TeamController {
+public class TeamController extends ControllerImpl implements Controller{
 
 	@Context
 	HttpServletRequest request;
 	HttpSession session;
-
-	public static PriorityQueue<Team> hundredDollarPlayerBuyerTeamQueue = new PriorityQueue<>(new Comparator<Team>() {
-		@Override
-		public int compare(Team o1, Team o2) {
-			return o1.getHundredDollarPlayerCount() > o2.getHundredDollarPlayerCount() ? -1 : 1;
-		}
-	});
 
 	// Test method
 	@GET
@@ -66,7 +45,7 @@ public class TeamController {
 	@GET
 	@Path("newTeam")
 	public String newTeam() {
-		for (Session session : SocketImpl.peers) {
+		for (Session session : SocketCaptainImpl.captainPeers) {
 			try {
 				session.getBasicRemote().sendText("Update with new teams");
 			} catch (IOException e) {
@@ -79,7 +58,6 @@ public class TeamController {
 	@POST
 	@Path("teamDetails")
 	@Consumes(MediaType.APPLICATION_JSON)
-
 	public String test(Team teamDetail) {
 		try {
 			TeamDBAccess teamDB = new TeamDBAccess();
@@ -99,6 +77,11 @@ public class TeamController {
 		}
 	}
 
+	/**
+	 * saveDreamTeam endpoint for the captain with session email
+	 * @param team
+	 * @return
+	 */
 	@POST
 	@Path("saveDreamTeam")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -106,13 +89,17 @@ public class TeamController {
 		try {
 			TeamDBAccess teamDB = new TeamDBAccess();
 			System.out.println(team);
-			return teamDB.saveTeam(team);
+			return teamDB.saveDreamTeam(team);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
 
+	/**
+	 * getDreamTeam endpoint for the captain with session email 
+	 * @return response with dreamteam of form <<ID,Budget,Role>>
+	 */
 	@GET
 	@Path("getDreamTeam")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -123,35 +110,17 @@ public class TeamController {
 
 		session = request.getSession();
 		String email = (String) session.getAttribute("email");
-		String captainId = playerDB.getCaptainId(email);
+		String teamName = playerDB.getTeamName(email);
 		
-		Object dreamTeam = teamDB.getDreamTeamofCaptain(captainId);
+		Object dreamTeam = teamDB.getDreamTeamofCaptain(teamName);
 		return Response.ok(dreamTeam==null?"[]":dreamTeam).build();
 
 	}
 
-	@POST
-	@Path("setDreamTeam")
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Boolean setDreamTeam(List<DreamTeam3Player> dreamTeamList) {
-		try {
-			PlayerDBAccess playerDB = new PlayerDBAccess();
-			session = request.getSession();
-			String email = (String) session.getAttribute("email");
-			String captainId = playerDB.getCaptainId(email);
-			
-			Boolean isSetTeam = playerDB.setDreamTeam(dreamTeamList,captainId);
-			if (isSetTeam != null) {
-				return isSetTeam;
-			} else {
-				throw new Exception();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
+	/**
+	 * getAllTeams endpoint for auctioneer screen
+	 * @return json all teams object
+	 */
 	@GET
 	@Path("getAllTeams")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -160,4 +129,26 @@ public class TeamController {
 		BasicDBList allTeams = teamDB.getAllTeams();
 		return Response.ok().entity(allTeams).build();
 	}
+	
+	/**
+	 * getNextPlayer endpoint for the Auctioneer/ Projection/ Captain screen
+	 * @return Player object
+	 */
+	@GET
+	@Path("getHundredDollarTeamList")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response get100$TeamList() {
+		try {
+			TeamDBAccess teamDB = new TeamDBAccess();
+			List<Team> hundred$teams = teamDB.get100$TeamList();
+			
+			return Response.ok().entity(hundred$teams).build();
+			
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			return Response.ok().entity(e).build();
+		}
+	}
+	
 }

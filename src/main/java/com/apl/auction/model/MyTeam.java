@@ -1,9 +1,17 @@
 package com.apl.auction.model;
 
 public class MyTeam {
-	String id;
+	String _id;
+	public String get_id() {
+		return _id;
+	}
+	public void set_id(String _id) {
+		this._id = _id;
+	}
 	String firstName;
 	String lastName;
+	private Integer cost;
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -17,11 +25,11 @@ public class MyTeam {
 		this.lastName = lastName;
 	}
 
-	public String getId() {
-		return id;
+	public Integer getCost() {
+		return cost;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setCost(Integer cost) {
+		this.cost = cost;
 	}
 	
 }

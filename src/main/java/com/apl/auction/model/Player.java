@@ -8,6 +8,7 @@ public class Player {
 	private String firstName;
 	private String lastName;
 	private String teamName;
+	private Integer cost;
 	private String role;
 	private Boolean isSold;
 	private String email;
@@ -34,6 +35,7 @@ public class Player {
 	private String imageFormat;
 	private String refName;
 	private List<List<String>> dreamTeam;
+	private Boolean isEdit = false;
 	
 	public Player() {}
 	
@@ -295,20 +297,27 @@ public class Player {
 		this.role = role;
 	}
 
-	private int cost;
-	public int getCost() {
-		return cost;
-	}
-
-	public void setCost(int cost) {
-		this.cost = cost;
-	}
-
 	public Boolean getIsSold() {
 		return isSold;
 	}
 
 	public void setIsSold(Boolean isSold) {
 		this.isSold = isSold;
+	}
+
+	public Integer getCost() {
+		return cost;
+	}
+
+	public void setCost(Integer cost) {
+		this.cost = cost;
+	}
+
+	public Boolean getIsEdit() {
+		return isEdit;
+	}
+
+	public void setIsEdit(Boolean isEdit) {
+		this.isEdit = isEdit;
 	}
 }

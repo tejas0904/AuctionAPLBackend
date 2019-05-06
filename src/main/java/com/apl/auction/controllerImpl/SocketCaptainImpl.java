@@ -12,17 +12,16 @@ import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/socket/{mail}")
-public class SocketImpl {
+@ServerEndpoint("/captainSocket/{mail}")
+public class SocketCaptainImpl {
 
-	public static Set<Session> peers = Collections.synchronizedSet(new HashSet<Session>());
+	public static Set<Session> captainPeers = Collections.synchronizedSet(new HashSet<Session>());
 
 	@OnMessage
 	public String onMessage(String message, Session session, @PathParam("mail") String mail) {
 		try {
-			//JSONObject jObj = new JSONObject(message);
 			System.out.println("received message from client " + mail);
-			for (Session s : peers) {
+			for (Session s : captainPeers) {
 				try {
 					s.getBasicRemote().sendText(message);
 					System.out.println("send message to peer ");
@@ -39,8 +38,8 @@ public class SocketImpl {
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("mail") String mail) {
-		System.out.println("mediator: opened websocket channel for client " + mail);
-		peers.add(session);
+		System.out.println("Mediator: opened websocket channel for captain :: " + mail);
+		captainPeers.add(session);
 
 		try {
 			session.getBasicRemote().sendText("good to be in touch");
@@ -50,7 +49,7 @@ public class SocketImpl {
 
 	@OnClose
 	public void onClose(Session session, @PathParam("mail") String mail) {
-		System.out.println("mediator: closed websocket channel for client " + mail);
-		peers.remove(session);
+		System.out.println("Mediator: closed websocket channel for captain " + mail);
+		captainPeers.remove(session);
 	}
 }

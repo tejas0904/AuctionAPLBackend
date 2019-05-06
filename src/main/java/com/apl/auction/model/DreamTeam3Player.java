@@ -1,15 +1,14 @@
 package com.apl.auction.model;
 
-import java.util.List;
-
 public class DreamTeam3Player {
-	List<String> playerId;
+	String playerId;
 	int budget;
+	public DreamTeam3Player() {}
 	
-	public List<String> getPlayerId() {
+	public String getPlayerId() {
 		return playerId;
 	}
-	public void setPlayerId(List<String> playerId) {
+	public void setPlayerId(String playerId) {
 		this.playerId = playerId;
 	}
 	public int getBudget() {

@@ -22,18 +22,16 @@ public class SessionInterceptor implements ContainerRequestFilter
     public void filter(ContainerRequestContext requestContext) throws IOException 
     {
     	UriInfo info = requestContext.getUriInfo();
-    	System.out.print(info.getPath().toString());
+    	System.out.print("API NAME :: "+info.getPath().toString());
     	if(!requestContext.getMethod().equals("OPTIONS") && !info.getPath().toString().contains("logger") && !info.getPath().toString().contains("socket") 
     			&& !info.getPath().toString().contains("projector"))
     	{
     		
     		HttpSession session = servletRequest.getSession();
-    		System.out.println(session.getAttribute("email")); 
-    		//requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
+    		System.out.println(" for username :: "+session.getAttribute("email")); 
             if (session.getAttribute("email") == null || session.getAttribute("email").equals("")) 
             {    
-                //session.setAttribute("test", "value");
-                System.out.println("session null"+session.getAttribute("email"));
+                System.out.println("session null for :: "+session.getAttribute("email"));
                 requestContext.abortWith(Response.status(Status.UNAUTHORIZED).build());
             }
     	}
