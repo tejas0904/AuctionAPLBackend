@@ -118,6 +118,7 @@ public class PlayerDBAccess {
 				p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
 				p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
 				p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
+				p.setTimeStamp(result.getLong("timeStamp"));
 				p.setBattingComment(
 						result.get("battingComment") == null ? "" : result.get("battingComment").toString());
 				p.setBowlingComment(
@@ -182,6 +183,7 @@ public class PlayerDBAccess {
 		BasicDBObject updateFields = new BasicDBObject();
 		updateFields.append("teamName", player.getTeamName());
 		updateFields.append("cost", player.getCost());
+		updateFields.append("timeStamp", System.currentTimeMillis());
 		BasicDBObject setQuery = new BasicDBObject();
 		setQuery.append("$set", updateFields);
 		players.updateOne(query, setQuery);

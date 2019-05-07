@@ -33,3 +33,7 @@ target/classes/com/apl/auction/controllerImpl/SocketImpl.class
 target/classes/com/apl/auction/controllerImpl/PlayerController.class
 target/classes/com/apl/auction/controllerImpl/loginController.class
 target/classes/com/apl/auction/controllerImpl/ControllerImpl.class
+target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
+target/classes/com/apl/auction/dataAccess/TeamDBAccess.class
+target/classes/com/apl/auction/model/MyTeam.class
+target/classes/com/apl/auction/model/Player.class

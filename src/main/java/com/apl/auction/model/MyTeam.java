@@ -1,7 +1,21 @@
 package com.apl.auction.model;
 
-public class MyTeam {
+public class MyTeam implements Comparable<MyTeam>{
 	String _id;
+	String role;
+	long timeStamp;
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
 	public String get_id() {
 		return _id;
 	}
@@ -30,6 +44,12 @@ public class MyTeam {
 	}
 	public void setCost(Integer cost) {
 		this.cost = cost;
+	}
+	@Override
+	public int compareTo(MyTeam o) {
+		return this.timeStamp > o.timeStamp ? 1 : this.timeStamp < o.timeStamp ? -1 : 0;
+
+		
 	}
 	
 }

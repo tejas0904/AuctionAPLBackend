@@ -36,7 +36,16 @@ public class Player {
 	private String refName;
 	private List<List<String>> dreamTeam;
 	private Boolean isEdit = false;
+	private long timeStamp;
 	
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(long timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+
 	public Player() {}
 	
 	public String getFirstName() {
