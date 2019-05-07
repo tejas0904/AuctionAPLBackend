@@ -118,7 +118,18 @@ public class PlayerDBAccess {
 				p.setBattingRating(Integer.parseInt(result.get("battingRating").toString()));
 				p.setBowlingRating(Integer.parseInt(result.get("bowlingRating").toString()));
 				p.setFieldingRating(Integer.parseInt(result.get("fieldingRating").toString()));
-				p.setTimeStamp(result.getLong("timeStamp"));
+				if (result.getString("role")!=null && result.getString("role").equals("captain")) {
+					p.setTimeStamp(1);
+
+				} else if (result.getString("role")!=null && result.getString("role").equals("vice captain")) {
+					p.setTimeStamp(2);
+
+				}  else if (result.getString("role")!=null && result.getString("role").equals("associate captain")) {
+					p.setTimeStamp(3);
+
+				}  else if (result.getLong("timeStamp")!=null){
+					p.setTimeStamp(result.getLong("timeStamp"));
+				}
 				p.setBattingComment(
 						result.get("battingComment") == null ? "" : result.get("battingComment").toString());
 				p.setBowlingComment(
@@ -147,6 +158,7 @@ public class PlayerDBAccess {
 		List<Document> results = players.find(documentFind).into(new ArrayList<Document>());// FROM yourCollection
 		if (results != null) {
 			Document result = results.get(getRandom(results.size()));
+			
 			dc.closeClient();
 			Player p = new Player();
 			p.set_id(result.getObjectId("_id").toString());
@@ -161,6 +173,9 @@ public class PlayerDBAccess {
 			p.setBowlingComment(result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
 			p.setFieldingComment(result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 			p.setPhoto(result.get("photo").toString());
+			if(results.size()%12 == 0) {
+				p.setBlind(true);
+			}
 			return p;
 		} else {
 			return null;

@@ -149,19 +149,8 @@ public class TeamDBAccess {
 			myTeam.setLastName(allPlayers.get(i).getLastName());
 			myTeam.setCost(allPlayers.get(i).getCost());
 			myTeam.setRole(allPlayers.get(i).getRole());
-
-			if (allPlayers.get(i).getRole().equals("captain")) {
-				myTeam.setTimeStamp(1);
-
-			} else if (allPlayers.get(i).getRole().equals("vice captain")) {
-				myTeam.setTimeStamp(2);
-
-			} else if (allPlayers.get(i).getRole().equals("associate captain")) {
-				myTeam.setTimeStamp(3);
-
-			} else {
-				myTeam.setTimeStamp(allPlayers.get(i).getTimeStamp());
-			}
+			myTeam.setTimeStamp(allPlayers.get(i).getTimeStamp());
+			
 			listMyTeam.add(myTeam);
 		}
 		while (teamCursor.hasNext()) {
@@ -174,6 +163,7 @@ public class TeamDBAccess {
 //			team.setViceCaptain(teamDocument.getString("viceCaptain"));
 //			team.setAssociatedCaptain(teamDocument.getString("associatedCaptain"));
 			List<MyTeam> myTeam = allPlayersHashMap.get(teamDocument.getString("teamName"));
+			Collections.sort(myTeam);
 			team.setMyTeam(myTeam);
 			// team.setHundredDollarPlayerCount(team.getHundredDollarPlayerCount()+1);
 			allTeams.add(team);

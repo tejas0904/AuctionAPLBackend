@@ -37,9 +37,18 @@ public class Player {
 	private List<List<String>> dreamTeam;
 	private Boolean isEdit = false;
 	private long timeStamp;
+	private boolean isBlind = false;
 	
 	public long getTimeStamp() {
 		return timeStamp;
+	}
+
+	public boolean isBlind() {
+		return isBlind;
+	}
+
+	public void setBlind(boolean isBlind) {
+		this.isBlind = isBlind;
 	}
 
 	public void setTimeStamp(long timeStamp) {

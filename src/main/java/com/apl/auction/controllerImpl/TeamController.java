@@ -1,9 +1,7 @@
 package com.apl.auction.controllerImpl;
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
-import java.util.PriorityQueue;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -20,7 +18,6 @@ import javax.ws.rs.core.Response;
 import com.apl.auction.controller.Controller;
 import com.apl.auction.dataAccess.PlayerDBAccess;
 import com.apl.auction.dataAccess.TeamDBAccess;
-import com.apl.auction.model.Player;
 import com.apl.auction.model.Team;
 import com.mongodb.BasicDBList;
 
