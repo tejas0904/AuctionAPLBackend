@@ -148,4 +148,15 @@ public class TeamController extends ControllerImpl implements Controller{
 		}
 	}
 	
+	@GET
+	@Path("preview")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPreview()
+	{
+		TeamDBAccess teamDB = new TeamDBAccess();
+		BasicDBList allTeams = teamDB.getAllTeams();
+		projectorBroadcast(allTeams);
+		return Response.ok().entity(allTeams!=null?true:false).build();
+	}
+	
 }

@@ -47,9 +47,7 @@ public class MyTeam implements Comparable<MyTeam>{
 	}
 	@Override
 	public int compareTo(MyTeam o) {
-		return this.timeStamp > o.timeStamp ? 1 : this.timeStamp < o.timeStamp ? -1 : 0;
-
-		
+		return this.timeStamp > o.timeStamp ? 1 : this.timeStamp < o.timeStamp ? -1 : 0;	
 	}
 	
 }

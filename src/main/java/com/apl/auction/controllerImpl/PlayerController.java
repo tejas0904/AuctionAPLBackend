@@ -32,7 +32,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-
+import com.mongodb.DBObject;
 import com.apl.auction.helper.Constant;
 import com.apl.auction.controller.Controller;
 import com.apl.auction.dataAccess.PlayerDBAccess;
@@ -120,6 +120,7 @@ public class PlayerController extends ControllerImpl implements Controller{
 			captainBroadcast(player);
 			
 			return Response.ok().entity(player).build();
+			//throw new Exception();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -161,8 +162,17 @@ public class PlayerController extends ControllerImpl implements Controller{
 		}
 	}
 	
-	// -------------------------------------------------------- CLEAN UP API's -------------------------------------------------------------
+	/*@GET
+	@Path("getMvpPlayer")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response mvpPlayer() {
+		TeamDBAccess teamDB = new TeamDBAccess();
+		BasicDBList allTeams = teamDB.getAllTeams();
+		//System.out.print(allTeams.get("myTeam"));
+		//return Response.ok().entity(allTeams.get("myTeam")).build();
+	}*/
 	
+	// -------------------------------------------------------- CLEAN UP API's -------------------------------------------------------------
 	
 	/**
 	 * Temporary method for posting into DB from postman
@@ -236,7 +246,5 @@ public class PlayerController extends ControllerImpl implements Controller{
 			e.printStackTrace();
 			return "error";
 		}
-	}
-
-	
+	}	
 }

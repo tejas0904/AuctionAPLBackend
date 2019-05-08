@@ -22,6 +22,7 @@ import com.apl.auction.externalApi.S3ImageUpload;
 import com.apl.auction.model.Player;
 import com.apl.auction.model.Team;
 import com.google.gson.Gson;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
 import sun.misc.BASE64Decoder;
@@ -51,6 +52,34 @@ public abstract class ControllerImpl implements Controller{
 	}
 	
 	// -------------------------------------------------------- BROADCAST API's -------------------------------------------------------------
+
+	protected void projectorBroadcast(Player player) {
+		if (SocketProjectorImpl.peers != null) {
+			Session session = SocketProjectorImpl.peers;
+			try {
+				BasicDBObject jsonPayload = new BasicDBObject();
+				jsonPayload.put("type", "player");
+				jsonPayload.put("json", new Gson().toJson(player));
+				session.getBasicRemote().sendText(new Gson().toJson(jsonPayload));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void projectorBroadcast(BasicDBList allTeams) {
+		if (SocketProjectorImpl.peers != null) {
+			Session session = SocketProjectorImpl.peers;
+			try {
+				BasicDBObject jsonPayload = new BasicDBObject();
+				jsonPayload.put("type", "team");
+				jsonPayload.put("json", new Gson().toJson(allTeams));
+				session.getBasicRemote().sendText(new Gson().toJson(jsonPayload));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 	
 	protected void captainBroadcast(Player player) {
 		for (Session session : SocketCaptainImpl.captainPeers) {
@@ -59,19 +88,8 @@ public abstract class ControllerImpl implements Controller{
 				jsonPayload.put("type", "player");
 				jsonPayload.put("json", new Gson().toJson(player));
 				
-				session.getBasicRemote().sendText(jsonPayload.toString());
+				session.getBasicRemote().sendText(new Gson().toJson(jsonPayload));
 			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	protected void projectorBroadcast(Player player) {
-		if (SocketProjectorImpl.peers != null) {
-			Session session = SocketProjectorImpl.peers;
-			try {
-				session.getBasicRemote().sendText(new Gson().toJson(player));
-			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
