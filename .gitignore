@@ -43,3 +43,15 @@ target/classes/com/apl/auction/dataAccess/TeamDBAccess.class
 target/classes/com/apl/auction/model/Player.class
 target/m2e-wtp/web-resources/META-INF/MANIFEST.MF
 target/m2e-wtp/web-resources/META-INF/maven/APLBackend.project/APL2019/pom.properties
+target/m2e-wtp/web-resources/META-INF/MANIFEST.MF
+target/classes/com/apl/auction/controllerImpl/TeamController.class
+target/classes/com/apl/auction/controllerImpl/PlayerController.class
+target/classes/com/apl/auction/controllerImpl/ControllerImpl.class
+target/classes/com/apl/auction/controllerImpl/ControllerImpl.class
+target/classes/com/apl/auction/controllerImpl/loginController.class
+target/classes/com/apl/auction/controllerImpl/PlayerController.class
+target/classes/com/apl/auction/controllerImpl/TeamController.class
+target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
+target/classes/com/apl/auction/dataAccess/TeamDBAccess.class
+target/classes/com/apl/auction/helper/Constant.class
+target/m2e-wtp/web-resources/META-INF/MANIFEST.MF

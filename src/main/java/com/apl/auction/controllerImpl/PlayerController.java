@@ -247,4 +247,21 @@ public class PlayerController extends ControllerImpl implements Controller{
 			return "error";
 		}
 	}	
+	
+	@GET
+	@Path("copyData")
+	public boolean copyData()
+	{
+		PlayerDBAccess playerDB = new PlayerDBAccess();
+		return playerDB.copyData();
+	}
+	
+	@GET
+	@Path("getEmail")
+	public String getEmail()
+	{
+		PlayerDBAccess playerDB = new PlayerDBAccess();
+		return playerDB.getEmail();
+	}
+
 }

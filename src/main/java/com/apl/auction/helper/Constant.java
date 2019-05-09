@@ -3,8 +3,8 @@ package com.apl.auction.helper;
 public class Constant {
 	public static final String USERNAME = "root";
 	public static final String PASSWORD = "password123";
-	public static final String PLAYERDATABASENAME = "playersTestData";
-	public static final String TEAMDATABASE = "teamsTestData";
+	public static final String PLAYERDATABASENAME = "playersProdData";
+	public static final String TEAMDATABASE = "teamsProdData";
 	public static String S3BucketName = "apl2019";
 	public static String AccessKey = "AKIAJYVF4D3TN7FPBPQQ";
 	public static String SecretKey = "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";

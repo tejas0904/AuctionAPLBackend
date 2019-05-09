@@ -209,4 +209,13 @@ public class TeamDBAccess {
 		return final100$Teams;
 	}
 
+	public boolean removeFields()
+	{
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> teamDb = dc.getCollection(Constant.TEAMDATABASE);
+		BasicDBObject documentFind = new BasicDBObject("teamName", new BasicDBObject("$exists", true));
+		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("dreamTeam","")));
+		dc.closeClient();
+		return true;
+	}
 }

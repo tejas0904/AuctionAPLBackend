@@ -138,7 +138,9 @@ public class PlayerDBAccess {
 						result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 				p.setPhoto(result.get("photo").toString());
 				p.setCost(Integer.parseInt(result.get("cost") == null ? "0": result.get("cost").toString()));
-
+				if(results.size()%12 == 0) {
+					p.setBlind(true);
+				}
 				playerList.add(p);
 			}
 		}
@@ -158,7 +160,6 @@ public class PlayerDBAccess {
 		List<Document> results = players.find(documentFind).into(new ArrayList<Document>());// FROM yourCollection
 		if (results != null) {
 			Document result = results.get(getRandom(results.size()));
-			
 			dc.closeClient();
 			Player p = new Player();
 			p.set_id(result.getObjectId("_id").toString());
@@ -173,9 +174,6 @@ public class PlayerDBAccess {
 			p.setBowlingComment(result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
 			p.setFieldingComment(result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 			p.setPhoto(result.get("photo").toString());
-			if(results.size()%12 == 0) {
-				p.setBlind(true);
-			}
 			return p;
 		} else {
 			return null;
@@ -248,7 +246,7 @@ public class PlayerDBAccess {
 		
 		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("teamName","")));
 		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
-		//playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));
 		
 		dc.closeClient();
 		return true;
@@ -262,7 +260,7 @@ public class PlayerDBAccess {
 		{
 			BasicDBObject query = new BasicDBObject("_id", new ObjectId(playerList.get(i).get_id()));
 			Document documentFind = new Document();
-			documentFind.append("isSold", false);
+			documentFind.append("timeStamp", false);
 			BasicDBObject setQuery = new BasicDBObject();
 			setQuery.append("$set", documentFind);
 			players.updateOne(query, setQuery);
@@ -300,6 +298,32 @@ public class PlayerDBAccess {
 		students.updateOne(query, setQuery1);
 		dc.closeClient();
 		return true;
+	}
+	
+	public boolean copyData() {
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> playerCopyDB = dc.getCollection("playersTestData");
+		MongoCollection<Document> playerDB = dc.getCollection(Constant.PLAYERDATABASENAME);
+		List<Document> results = playerCopyDB.find().into(new ArrayList<Document>());
+		for(Document result : results) {
+			BasicDBObject query = new BasicDBObject("mobileNumber",result.get("mobileNumber"));
+			BasicDBObject setQuery = new BasicDBObject();
+			setQuery.append("$set", new BasicDBObject("photo",result.get("photo").toString()));
+			playerDB.updateOne(query,setQuery);
+		}
+		return true;
+	}
+	
+	public String getEmail()
+	{
+		String email="";
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> playerCopyDB = dc.getCollection("players");
+		List<Document> results = playerCopyDB.find().into(new ArrayList<Document>());
+		for(Document result : results) {
+			email+=result.getString("email")+",";
+		}
+		return email.substring(0,email.length()-1);
 	}
 	
 }

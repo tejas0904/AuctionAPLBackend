@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 import com.apl.auction.controller.Controller;
 import com.apl.auction.dataAccess.PlayerDBAccess;
 import com.apl.auction.dataAccess.TeamDBAccess;
+import com.apl.auction.model.Player;
 import com.apl.auction.model.Team;
 import com.mongodb.BasicDBList;
 
@@ -159,4 +160,18 @@ public class TeamController extends ControllerImpl implements Controller{
 		return Response.ok().entity(allTeams!=null?true:false).build();
 	}
 	
+	// -------------------------------------------------------- CLEAN UP API's -------------------------------------------------------------
+	
+	@POST
+	@Path("postTemp")
+	public String postTemp() {
+		try {
+			TeamDBAccess teamDB = new TeamDBAccess();
+			boolean flag= teamDB.removeFields();
+			return "true";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "error";
+		}
+	}
 }

@@ -42,7 +42,7 @@ public class loginController extends ControllerImpl implements Controller {
 		System.out.println("LOGGER :: LOGIN --> "+email);
 		if(teamName!= null){
 			String json = "{\"teamName\": \"" + teamName
-					+ "\",\"teamBudget\":16000}";
+					+ "\",\"teamBudget\":20000}";
 			session.setAttribute("email", email);
 			
 			return Response.ok(json).build();
