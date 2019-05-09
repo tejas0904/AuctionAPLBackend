@@ -246,10 +246,10 @@ public class PlayerDBAccess {
 		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", true));
 		
 
-		//String md5Hex = DigestUtils
-		//	      .md5Hex("1234").toUpperCase();
+		String md5Hex = DigestUtils
+			      .md5Hex("1234").toUpperCase();
 		
-		//playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password",md5Hex)));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password",md5Hex)));
 		//playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
 //		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
 //		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));

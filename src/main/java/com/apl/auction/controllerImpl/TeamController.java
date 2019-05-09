@@ -163,7 +163,7 @@ public class TeamController extends ControllerImpl implements Controller{
 	// -------------------------------------------------------- CLEAN UP API's -------------------------------------------------------------
 	
 	@POST
-	@Path("postTemp")
+	@Path("removeDreamTeams")
 	public String postTemp() {
 		try {
 			TeamDBAccess teamDB = new TeamDBAccess();

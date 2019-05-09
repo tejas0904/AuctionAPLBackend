@@ -214,7 +214,10 @@ public class TeamDBAccess {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> teamDb = dc.getCollection(Constant.TEAMDATABASE);
 		BasicDBObject documentFind = new BasicDBObject("teamName", new BasicDBObject("$exists", true));
-		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("dreamTeam","")));
+		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("players","")));
+		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("captain","")));
+		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("associatedCaptain","")));
+		teamDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("viceCaptain","")));
 		dc.closeClient();
 		return true;
 	}
