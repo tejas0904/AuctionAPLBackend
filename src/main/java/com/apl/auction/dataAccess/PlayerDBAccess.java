@@ -242,12 +242,13 @@ public class PlayerDBAccess {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> playerDb = dc.getCollection(Constant.PLAYERDATABASENAME);
 
-		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", false));
+		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", true));
 		
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("teamName","")));
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));
-		
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password","1234")));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
+//		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
+//		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));
+//		
 		dc.closeClient();
 		return true;
 	}
@@ -326,4 +327,10 @@ public class PlayerDBAccess {
 		return email.substring(0,email.length()-1);
 	}
 	
+	public boolean resetPassword(String email, String oldPassword, String newPassword)
+	{
+		
+		
+		return true;
+	}
 }
