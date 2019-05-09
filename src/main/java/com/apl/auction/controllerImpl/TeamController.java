@@ -174,4 +174,26 @@ public class TeamController extends ControllerImpl implements Controller{
 			return "error";
 		}
 	}
+	
+	// -- TODO -- Remove <Consumes PlayerList> and remove from whole database itself @Rajan
+		/**
+		 * get dream Teams with captains on prod data 9/5/2019
+		 * @return List<Team>
+//		 */
+//		@POST
+//		@Path("teamDreamTeams")
+//		@Produces(MediaType.APPLICATION_JSON)
+//		public List<Team> allTeamDreamTeam() {
+////			try {
+////				TeamDBAccess teamDB = new TeamDBAccess();
+////				//List<Team> teamList = teamDB.allTeamDreamTeam();
+////				if (teamList!=null)
+////					return teamList;
+////				else
+////					throw new Exception();
+////			} catch (Exception e) {
+////				e.printStackTrace();
+////				return null;
+////			}
+//		}
 }

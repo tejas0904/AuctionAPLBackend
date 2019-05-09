@@ -3,6 +3,7 @@ package com.apl.auction.dataAccess;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 
@@ -244,8 +245,12 @@ public class PlayerDBAccess {
 
 		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", true));
 		
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password","1234")));
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
+
+		//String md5Hex = DigestUtils
+		//	      .md5Hex("1234").toUpperCase();
+		
+		//playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password",md5Hex)));
+		//playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
 //		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
 //		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));
 //		
@@ -329,8 +334,23 @@ public class PlayerDBAccess {
 	
 	public boolean resetPassword(String email, String oldPassword, String newPassword)
 	{
+		dc = new DatabaseConnectionAPL();
+		MongoCollection<Document> playerDB = dc.getCollection(Constant.PLAYERDATABASENAME);
 		
+		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", true));
+		documentFind.append("email", email);
+		documentFind.append("password",oldPassword);
+		Document playerDetails = playerDB.find(documentFind).first();
 		
+		if(playerDetails==null)
+			return false;
+		else {
+			BasicDBObject where = new BasicDBObject("email",playerDetails.get("email").toString());
+			BasicDBObject setQuery = new BasicDBObject();
+			setQuery.append("$set", new BasicDBObject("password",newPassword));
+			playerDB.updateOne(where, setQuery);
+		}
 		return true;
 	}
+
 }

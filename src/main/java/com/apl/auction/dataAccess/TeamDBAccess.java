@@ -218,4 +218,23 @@ public class TeamDBAccess {
 		dc.closeClient();
 		return true;
 	}
+	
+	//public List<Team> setDefaultDreamTeam() {
+//		dc = new DatabaseConnectionAPL();
+//		
+//		MongoCollection<Document> playerDB = dc.getCollection(Constant.PLAYERDATABASENAME);
+//		List<Document> playerResults = playerDB.find().into(new ArrayList<Document>());
+//		List<Team> teamswithCaptainList = new ArrayList<Team>();
+//		
+//		MongoCollection<Document> teamDB = dc.getCollection(Constant.TEAMDATABASE);
+//		List<Document> teamResults = teamDB.find().into(new ArrayList<Document>());
+//		List<Team> teamswithCaptainList = new ArrayList<Team>();
+//		for (Document result : teamResults) {
+//			Team teamswithCaptain = new Team();
+//			teamswithCaptain.setDreamTeam( result.get("dreamTeam"));
+//			teamswithCaptainList.add(teamswithCaptain);
+//
+//		}
+//		return teamswithCaptainList;		
+	//}
 }

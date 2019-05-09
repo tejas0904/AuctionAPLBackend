@@ -219,8 +219,7 @@ public class PlayerController extends ControllerImpl implements Controller{
 			e.printStackTrace();
 			return "error";
 		}
-	}
-	
+	}	
 	
 	// -- TODO -- Edit player that has been sold for Auctioneer screen @Rajan
 	/**
