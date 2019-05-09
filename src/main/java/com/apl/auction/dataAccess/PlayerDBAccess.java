@@ -243,15 +243,15 @@ public class PlayerDBAccess {
 		dc = new DatabaseConnectionAPL();
 		MongoCollection<Document> playerDb = dc.getCollection(Constant.PLAYERDATABASENAME);
 
-		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", true));
+		BasicDBObject documentFind = new BasicDBObject("role", new BasicDBObject("$exists", false));
 		
 
-		String md5Hex = DigestUtils
-			      .md5Hex("1234").toUpperCase();
+		//String md5Hex = DigestUtils
+		//	      .md5Hex("1234").toUpperCase();
 		
-		playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password",md5Hex)));
-		//playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("address","")));
-//		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
+		//playerDb.updateMany(documentFind, new BasicDBObject().append("$set",new BasicDBObject("password",md5Hex)));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("teamName","")));
+		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("cost","")));
 //		playerDb.updateMany(documentFind, new BasicDBObject().append("$unset",new BasicDBObject("timeStamp","")));
 //		
 		dc.closeClient();

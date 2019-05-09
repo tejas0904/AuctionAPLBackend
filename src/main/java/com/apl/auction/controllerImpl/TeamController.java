@@ -149,6 +149,10 @@ public class TeamController extends ControllerImpl implements Controller{
 		}
 	}
 	
+	/**
+	 * Projector broadcast with preview called upon by auctioneer for all teams
+	 * @return
+	 */
 	@GET
 	@Path("preview")
 	@Produces(MediaType.APPLICATION_JSON)

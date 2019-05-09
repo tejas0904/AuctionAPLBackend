@@ -59,3 +59,4 @@ target/classes/com/apl/auction/dataAccess/PlayerDBAccess.class
 *.class
 *.class
 *.class
+*.class
