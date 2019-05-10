@@ -139,9 +139,7 @@ public class PlayerDBAccess {
 						result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 				p.setPhoto(result.get("photo").toString());
 				p.setCost(Integer.parseInt(result.get("cost") == null ? "0": result.get("cost").toString()));
-				if(results.size()%12 == 0) {
-					p.setBlind(true);
-				}
+				//p.setTimeStamp((result.getLong("timeStamp")==null?0:result.getLong("timeStamp")));
 				playerList.add(p);
 			}
 		}
@@ -175,6 +173,10 @@ public class PlayerDBAccess {
 			p.setBowlingComment(result.get("bowlingComment") == null ? "" : result.get("bowlingComment").toString());
 			p.setFieldingComment(result.get("fieldingComment") == null ? "" : result.get("fieldingComment").toString());
 			p.setPhoto(result.get("photo").toString());
+			
+			if(results.size()%11 == 0) {
+				p.setBlind(true);
+			}
 			return p;
 		} else {
 			return null;
@@ -197,10 +199,12 @@ public class PlayerDBAccess {
 		BasicDBObject updateFields = new BasicDBObject();
 		updateFields.append("teamName", player.getTeamName());
 		updateFields.append("cost", player.getCost());
-		updateFields.append("timeStamp", System.currentTimeMillis());
+		Long timeStamp = System.currentTimeMillis();
+		updateFields.append("timeStamp", timeStamp);
 		BasicDBObject setQuery = new BasicDBObject();
 		setQuery.append("$set", updateFields);
 		players.updateOne(query, setQuery);
+		player.setTimeStamp(timeStamp);
 		return player;
 		}catch(Exception ex) {
 			System.out.println(ex);

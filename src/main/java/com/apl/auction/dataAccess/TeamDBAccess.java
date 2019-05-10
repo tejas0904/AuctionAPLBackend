@@ -202,9 +202,15 @@ public class TeamDBAccess {
 			hundred$team.setLogo(result.getString("logo"));
 			int hundred$flag = result.getInteger("hundred$flag") != null ? result.getInteger("hundred$flag") : 0;
 			hundred$team.setHundred$flag(hundred$flag);
+			MongoCollection<Document> players = dc.getCollection(Constant.PLAYERDATABASENAME);
+			Document documentFind = new Document();
+			documentFind.append("teamName", result.getString("teamName"));
+			List<Document> resultsPlayers = players.find(documentFind).into(new ArrayList<Document>());// FROM yourCollection
+			if(resultsPlayers.size()<11)
 			final100$Teams.add(hundred$team);
 
 		}
+		if(!final100$Teams.isEmpty())
 		Collections.sort(final100$Teams);
 		return final100$Teams;
 	}

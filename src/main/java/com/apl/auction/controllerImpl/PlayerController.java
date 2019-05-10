@@ -115,9 +115,10 @@ public class PlayerController extends ControllerImpl implements Controller{
 			PlayerDBAccess playerDB = new PlayerDBAccess();
 			Player player = playerDB.getNextPlayer();
 			
-			projectorBroadcast(player);
-			
-			captainBroadcast(player);
+			if(player!=null) {
+				projectorBroadcast(player);
+				captainBroadcast(player);
+			}
 			
 			return Response.ok().entity(player).build();
 			//throw new Exception();
@@ -147,8 +148,10 @@ public class PlayerController extends ControllerImpl implements Controller{
 			if(player.getCost() == 100)
 				{
 					List<Team> hundred$teams = teamDB.set100$TeamList(player.getTeamName());
-					captainBroadcast(hundred$teams);
+					
 				}
+			List<Team> hundred$teams = teamDB.get100$TeamList();
+			captainBroadcast(hundred$teams);
 			
 			if(!player.getIsEdit())
 			projectorBroadcast(player);
